@@ -152,8 +152,7 @@ router.delete('/:id', async (req, res) => {
     });
     if (!productData) {
       res.status(404).json({
-        ,
-        essage: "Error, no matching product found."
+        message: "Error, no matching product found."
       });
       return;
     }
