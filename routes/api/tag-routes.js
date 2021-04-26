@@ -12,12 +12,8 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Product data
   try {
     const tagsData = await Tag.findAll({
-      include: [{
-        moel: Tag,
-      }, {
-        model: ProductTag
-      }, {
-        model: Product
+      include: [ {
+        model: Product, through: ProductTag, as: 'tags'
       }]
     });
     res.status(200).json(tagsData);
@@ -31,7 +27,7 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Product data
   try {
     const tagsData = await Tag.findByPk(req.params.id, {
-      include: [{model: Tag}, {model: ProductTag}, {model: Product}]
+      include: [{model: Product, through: ProductTag, as: 'tags'}]
     });
     if(!tagsData) {
       res.status(404).json({message: "Error, no matching tag found."});
@@ -47,7 +43,7 @@ router.post('/', async (req, res) => {
   // create a new tag
   try {
     const tagsData = await Tag.create(req.body);
-    res.status(200).json(tagData);
+    res.status(200).json(tagsData);
   } catch(err) {
     res.status(400).json(err);
   }
@@ -56,7 +52,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   // update a tag's name by its `id` value
   try {
-    const tagsData = await Tag.update({tag_name: req.body.tag_name}, {where: req.params.id});
+    const tagsData = await Tag.update(req.body, {where: {id: req.params.id}});
     if(!tagsData) {
       res.status(404).json({message: "Error, no matching tag found."});
     }
